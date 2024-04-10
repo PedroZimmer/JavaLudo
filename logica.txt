@@ -1,0 +1,7 @@
+
+
+Jogador tem 4 pecas
+
+Bot tem 4 pecas
+
+cada peca tem uma posicao
