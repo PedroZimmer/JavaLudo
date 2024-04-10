@@ -9,7 +9,6 @@ public class Peca {
     }
 
     public Peca() {
-
     }
 
     public int getIdPeca() {
@@ -19,4 +18,6 @@ public class Peca {
     public void setIdPeca(int idPeca) {
         this.idPeca = idPeca;
     }
+
+
 }
