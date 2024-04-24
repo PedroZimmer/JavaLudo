@@ -41,12 +41,16 @@ public class Jogador {
 
     public void printPecasTabuleiro() {
         System.out.println("Peças no tabuleiro: ");
-        for (Peca peca : pecasTabuleiro) {
-            System.out.println(peca.getIdJogador() + " - " + peca.getIdPeca());
-        }
+//        for (Peca peca : pecasTabuleiro) {
+//            System.out.println(peca.getIdJogador() + " - " + peca.getIdPeca());
+//        }
+            for (int i = 0; i < pecasTabuleiro.size(); i++) {
+                int opc = i + 1;
+                System.out.println("(" + opc + ")" + " - " + pecasTabuleiro.get(i).getIdJogador() +  pecasTabuleiro.get(i).getIdPeca());
+            }
     }
 
-    public void moverPecaParaTabuleiro(Peca peca) {
+    public void moverPecaParaListaTabuleiro(Peca peca) {
         pecas.remove(peca); // Remove a peça da lista de peças do jogador
         pecasTabuleiro.add(peca); // Adiciona a peça à lista de peças no tabuleiro
     }
@@ -56,5 +60,12 @@ public class Jogador {
         pecas.add(peca); // Adiciona a peça à lista de peças do jogador
     }
 
+    public String getIdJogador() {
+        return idJogador;
+    }
+
+    public boolean temPecasDisponiveis() {
+        return pecas.size() > 0;
+    }
 
 }

@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Scanner;
+
 public class ConsoleUtil {
 
     public static void clearConsole() {
@@ -15,5 +17,30 @@ public class ConsoleUtil {
             e.printStackTrace();
         }
     }
+
+    public static void printHeader() {
+        System.out.println(
+                "██╗      ██╗   ██╗██████╗  ██████╗ \n" +
+                "██║      ██║   ██║██╔══██╗██╔═══██╗\n" +
+                "██║      ██║   ██║██║  ██║██║   ██║\n" +
+                "██║      ██║   ██║██║  ██║██║   ██║\n" +
+                "███████╗ ╚██████╔╝██████╔╝╚██████╔╝\n" +
+                "╚══════╝  ╚═════╝ ╚═════╝  ╚═════╝ \n"
+        );
+    }
+
+    public static String getResposta() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+
+    public static int getInt() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextInt();
+    }
+
+
+
+
 
 }

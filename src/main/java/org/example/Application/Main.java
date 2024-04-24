@@ -30,24 +30,11 @@ public class Main {
         System.out.println("\n");
 
         tabuleiro.adicionarPeca(1, jogador.getPecas().get(0), jogador); // Adiciona a peça do jogador ao tabuleiro
-        tabuleiro.adicionarPeca(1, jogador.getPecas().get(0), jogador); // Adiciona a peça do jogador ao tabuleiro
 
-
-        tabuleiro.printTabuleiroFormatado();
-
-        int dadoRolado = tabuleiro.jogarDado();
-
-        jogador.printPecasDispoviveis();
-        jogador.printPecasTabuleiro();
-
-        tabuleiro.removerPeca(1, jogador.getPecasTabuleiro().get(0), jogador);
+        tabuleiro.jogar(jogador); // O jogador joga
 
         System.out.println("\n");
 
-        jogador.printPecasDispoviveis();
-        jogador.printPecasTabuleiro();
-
-        tabuleiro.printTabuleiroFormatado();
 
 
 
