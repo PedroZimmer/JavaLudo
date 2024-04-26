@@ -2,6 +2,7 @@ package org.example.Application;
 
 import org.example.ConsoleUtil;
 import org.example.Entities.Jogador;
+import org.example.Entities.Peca;
 import org.example.Entities.Tabuleiro;
 
 import java.util.Scanner;
@@ -25,20 +26,21 @@ public class Main {
         System.out.println("Bem vindo ao jogo de tabuleiro!");
 
 
-        Jogador jogador = new Jogador("A"); // Instancia um novo jogador
+        Jogador jogadorA = new Jogador("A"); // Instancia um novo jogador
+        Jogador jogadorB = new Jogador("B"); // Instancia um novo jogador
 
-        System.out.println("\n");
-
-        tabuleiro.adicionarPeca(1, jogador.getPecas().get(0), jogador); // Adiciona a peça do jogador ao tabuleiro
-
-        tabuleiro.jogar(jogador); // O jogador joga
-
-        System.out.println("\n");
+        tabuleiro.jogar(jogadorA);
 
 
+        tabuleiro.jogar(jogadorB);
+
+        tabuleiro.jogar(jogadorA);
+
+        tabuleiro.jogar(jogadorA);
+        tabuleiro.jogar(jogadorA);
 
 
-
+        tabuleiro.printTabuleiroFormatado();
 
 
 

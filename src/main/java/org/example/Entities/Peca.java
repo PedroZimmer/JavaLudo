@@ -3,16 +3,23 @@ package org.example.Entities;
 public class Peca {
 
     private int idPeca;
+
+    private Jogador jogador; // Referência ao objeto Jogador ao qual esta peça pertence
     private String idJogador;
     private int contador = 1;
 
-    public Peca(String idJogador, int idPeca) {
-        this.idJogador = idJogador;
+    public Peca(Jogador jogador, int idPeca) {
+        this.jogador = jogador;
         this.idPeca = idPeca;
     }
 
 
-    public Peca() {
+    public Jogador getJogador() {
+        return jogador;
+    }
+
+    public void setJogador(Jogador jogador) {
+        this.jogador = jogador;
     }
 
     public int getIdPeca() {
@@ -23,9 +30,9 @@ public class Peca {
         this.idPeca = idPeca;
     }
 
-    public String getIdJogador() {
-        return idJogador;
-    }
+//    public String getIdJogador() {
+//        return idJogador;
+//    }
 
     public void contarCasas(int valorDado) {
         contador += valorDado;

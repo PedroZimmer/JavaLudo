@@ -2,7 +2,6 @@ package org.example.Entities;
 
 import org.example.ConsoleUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -22,51 +21,114 @@ public class Tabuleiro {
     }
 
     public void jogar(Jogador jogador) {
-        int valorDado = jogarDado();
+//        int valorDado = jogarDado();
+//        int valorDado = 13; // forcando para teste
+        int valorDado = 6;
         if (valorDado == 6) {
-            if (jogador.temPecasDisponiveis()) {
-                System.out.println("VOCE TIROU 6!");
-                System.out.println("Deseja tirar uma peca da casinha? (s/n)");
+            System.out.println("VOCE TIROU 6!");
+            if (jogador.temPecasTabuleiro() && !jogador.temPecasDisponiveis()) { // se o jogador tiver peças no tabuleiro e não tiver peças disponíveis
+                chamarFuncMoverPeca(jogador, valorDado);
+            } else if (jogador.temPecasDisponiveis() && !jogador.temPecasTabuleiro()) { // se o jogador tiver peças disponíveis e não tiver peças no tabuleiro
+                Peca peca = tirarPecaDaCasinha(jogador);
+                jogador.moverPecaParaListaTabuleiro(peca);
+                adicionarNaCasaInicial(peca, jogador);
+            }
+            else { // se o jogador tiver peças disponíveis e peças no tabuleiro
+                System.out.println("Quer mover ou tirar da casinha? (m/t)");
                 String resposta = ConsoleUtil.getResposta();
-                if (resposta.equals("s")) { // se o jogador quiser mover uma peça para o tabuleiro
+                if (resposta.equals("m")) {
+                    chamarFuncMoverPeca(jogador, valorDado);
+                } else {
                     Peca peca = tirarPecaDaCasinha(jogador);
                     jogador.moverPecaParaListaTabuleiro(peca);
-                } else {
-                    System.out.println("Escolha uma peça para mover: ");
-                    jogador.printPecasTabuleiro();
-                    int idPeca = ConsoleUtil.getInt();
-                    Peca peca = jogador.getPecasTabuleiro().get(idPeca-1);
-                    moverPeca( retornarPosicaoDaPeca(peca), retornarPosicaoDaPeca(peca) + valorDado, jogador, valorDado);
-
+                    adicionarNaCasaInicial(peca, jogador);
                 }
             }
-            System.out.println("Escolha uma peça para mover: ");
-            jogador.printPecasTabuleiro();
-            int idPeca = ConsoleUtil.getInt();
-            Peca peca = jogador.getPecasTabuleiro().get(idPeca-1);
-            moverPeca( retornarPosicaoDaPeca(peca), retornarPosicaoDaPeca(peca) + valorDado, jogador, valorDado);
+        } else if (jogador.temPecasTabuleiro()) {
+            chamarFuncMoverPeca(jogador, valorDado);
         } else {
-            System.out.println("Escolha uma peça para mover: ");
-            jogador.printPecasTabuleiro();
-            int idPeca = ConsoleUtil.getInt();
-            Peca peca = jogador.getPecasTabuleiro().get(idPeca-1);
-            moverPeca( retornarPosicaoDaPeca(peca), retornarPosicaoDaPeca(peca) + valorDado, jogador, valorDado);
+            System.out.println("Nenhuma peça no tabuleiro para mover.");
         }
         printTabuleiroFormatado();
     }
 
+    //preciso fazer agora uma funcao para que depois de jogar passar a vez para o proximo jogador
 
-    public int retornarPosicaoDaPeca(Peca peca) {
+
+//    public int retornarPosicaoDaPeca(Peca peca) {
+//        for (int i = 1; i <= 52; i++) {
+//            Stack<Peca> casa = casas.get(i);
+//            if (casa != null && !casa.isEmpty()) {
+//                Peca p = casa.peek();
+//                if (p.getIdJogador().equals(peca.getIdJogador()) && p.getIdPeca() == peca.getIdPeca()) {
+//                    return i;
+//                }
+//            }
+//        }
+//        return -1;
+//    }
+
+
+    public int retornarPosicaoDaPeca(Jogador jogador, int idPeca) {
         for (int i = 1; i <= 52; i++) {
             Stack<Peca> casa = casas.get(i);
             if (casa != null && !casa.isEmpty()) {
                 Peca p = casa.peek();
-                if (p.getIdJogador().equals(peca.getIdJogador()) && p.getIdPeca() == peca.getIdPeca()) {
+                if (p.getJogador() == jogador && p.getIdPeca() == idPeca) {
                     return i;
                 }
             }
         }
         return -1;
+    }
+
+
+    // VERSAO CHAMARFUNCMOVERPECA 1
+//    public void chamarFuncMoverPeca(Jogador jogadorDaVez, int valorDado) {
+//        System.out.println("Escolha uma peça para mover: ");
+//        jogadorDaVez.printPecasTabuleiro();
+//        int idPeca = ConsoleUtil.getInt();
+//        Peca peca = jogadorDaVez.getPecasTabuleiro().get(idPeca);
+//        if (verificarAdversarioCasaDestino(retornarPosicaoDaPeca(peca) + valorDado, jogadorDaVez)) { // se a casa destino tiver peças do adversário
+//            Jogador jogadorQueVaiPerderUmaPeca = deQuemEhAPeca(retornarPosicaoDaPeca(peca) + valorDado);
+//
+//            if (jogadorQueVaiPerderUmaPeca != null) {
+//                matarPeca(retornarPosicaoDaPeca(peca) + valorDado, jogadorQueVaiPerderUmaPeca);
+//
+//            } else {
+//                System.out.println("Jogador não encontrado.");
+//            }
+//        } else {
+//            moverPeca(retornarPosicaoDaPeca(peca), retornarPosicaoDaPeca(peca) + valorDado, jogadorDaVez, valorDado);
+//        }
+//    }
+
+    public void chamarFuncMoverPeca(Jogador jogadorDaVez, int valorDado) {
+        System.out.println("Escolha uma peça para mover: ");
+        jogadorDaVez.printPecasTabuleiro();
+        int idPeca = ConsoleUtil.getInt();
+        Peca peca = jogadorDaVez.getPecasTabuleiro().get(idPeca);
+        if (peca != null) { // Verifica se a peça foi encontrada
+            int posicaoAtual = retornarPosicaoDaPeca(jogadorDaVez, idPeca);
+            if (posicaoAtual != -1) { // Verifica se a peça está no tabuleiro
+                if (verificarAdversarioCasaDestino(posicaoAtual + valorDado, jogadorDaVez)) {
+                    Jogador jogadorQueVaiPerderUmaPeca = deQuemEhAPeca(posicaoAtual + valorDado);
+
+                    if (jogadorQueVaiPerderUmaPeca != null) {
+                        matarPeca(posicaoAtual + valorDado, jogadorQueVaiPerderUmaPeca);
+
+                    } else {
+                        System.out.println("Jogador não encontrado.");
+                    }
+                } else {
+                    moverPeca(posicaoAtual, posicaoAtual + valorDado, jogadorDaVez, valorDado);
+                }
+            } else {
+                System.out.println("Peça não encontrada no tabuleiro.");
+            }
+        } else {
+            System.out.println("Peça não encontrada.");
+        }
     }
 
 
@@ -79,6 +141,12 @@ public class Tabuleiro {
         return peca;
     }
 
+    public void colocarPecaNaCasinha(Jogador jogador, Peca x) {
+        // ID do jogador que vai tirar a peca do tabuleiro // ID da peca que vai ser tirada do tabuleiro
+        Peca peca = jogador.getPecasTabuleiro().get(x.getIdPeca());
+        jogador.moverPecaParaLista(peca);
+    }
+
     public int jogarDado() {
         dado = new Dado();
         int valorDado = dado.rolarDado();
@@ -86,9 +154,26 @@ public class Tabuleiro {
         return valorDado;
     }
 
+    public void adicionarNaCasaInicial(Peca peca, Jogador jogador) {
+        //casa 1 para o jogador a
+        //casa 14 para o jogador b
+        //casa 27 para o jogador c
+        //casa 40 para o jogador d
+
+        switch (jogador.getIdJogador()) {
+            case "A" -> {
+                adicionarPeca(1, peca, jogador);
+                System.out.println("Peca adicionada na casa 1");
+            }
+            case "B" -> adicionarPeca(14, peca, jogador);
+            case "C" -> adicionarPeca(27, peca, jogador);
+            case "D" -> adicionarPeca(40, peca, jogador);
+        }
+    }
+
     public void adicionarPeca(int casaId, Peca peca, Jogador jogador) {
         Stack<Peca> casa = casas.get(casaId);
-        jogador.moverPecaParaListaTabuleiro(jogador.getPecas().get(0));
+//        jogador.moverPecaParaListaTabuleiro(jogador.getPecas().get(0));
         if (casa != null) {
             casa.push(peca);
         } else {
@@ -123,42 +208,66 @@ public class Tabuleiro {
         }
     }
 
+    public Jogador deQuemEhAPeca(int casaDestino) {
+        Stack<Peca> casa = casas.get(casaDestino);
+        if (casa != null && !casa.isEmpty()) {
+            Peca peca = casa.peek();
+            return peca.getJogador();
+        }
+        return null;
+    }
+
+
     public void jogadorDaVez(Jogador jogador) {
         this.jogador = jogador;
     }
 
-    public Boolean verificarAdversarioCasaDestino(int casaDestino, Jogador jogador) {
+//    public Boolean verificarAdversarioCasaDestino(int casaDestino, Jogador jogador) {
+//        // Verifica se a casa destino contém peças do adversário
+//        Stack<Peca> casa = casas.get(casaDestino);
+//        if (casa != null && !casa.isEmpty()) {
+//            Peca peca = casa.peek();
+//            if (!peca.getIdJogador().equals(jogador.getIdJogador())) {
+////                System.out.println("Adversário encontrado na casa " + casaDestino);
+//                return true;
+//            }
+//        } else {
+////            System.out.println("Nenhuma peça encontrada na casa " + casaDestino);
+//        }
+//        return false;
+//
+//    }
+
+    public boolean verificarAdversarioCasaDestino(int casaDestino, Jogador jogador) {
         // Verifica se a casa destino contém peças do adversário
         Stack<Peca> casa = casas.get(casaDestino);
         if (casa != null && !casa.isEmpty()) {
-            Peca peca = casa.peek();
-            if (!peca.getIdJogador().equals(jogador.getIdJogador())) {
-//                System.out.println("Adversário encontrado na casa " + casaDestino);
-                return true;
+            for (Peca peca : casa) {
+                if (!peca.getJogador().equals(jogador)) {
+                    return true;
+                }
             }
-        } else {
-//            System.out.println("Nenhuma peça encontrada na casa " + casaDestino);
         }
         return false;
-
     }
 
-    public void printTabuleiro() {
-        for (int i = 1; i <= 52; i++) {
-            Stack<Peca> casa = casas.get(i); // Pega a pilha de peças da casa i
-            if (casa != null) {
-                StringBuilder sb = new StringBuilder("[");
-                for (Peca peca : casa) {
-                    sb.append(peca.getIdJogador());
-                }
-                sb.append("]");
-                System.out.print(sb);
-            } else {
-                System.out.print("[ ]");
-            }
-            System.out.print(" "); // Espaço entre as casas
-        }
-    }
+
+//    public void printTabuleiro() {
+//        for (int i = 1; i <= 52; i++) {
+//            Stack<Peca> casa = casas.get(i); // Pega a pilha de peças da casa i
+//            if (casa != null) {
+//                StringBuilder sb = new StringBuilder("[");
+//                for (Peca peca : casa) {
+//                    sb.append(peca.getIdJogador());
+//                }
+//                sb.append("]");
+//                System.out.print(sb);
+//            } else {
+//                System.out.print("[ ]");
+//            }
+//            System.out.print(" "); // Espaço entre as casas
+//        }
+//    }
 
     public void printTabuleiroFormatado() {
         System.out.printf("                    %s %s %s", casas.get(11), casas.get(12), casas.get(13));
