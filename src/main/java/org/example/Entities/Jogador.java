@@ -8,10 +8,12 @@ public class Jogador {
     private String idJogador = "A";
     private HashMap<Integer, Peca> pecas;
     private HashMap<Integer, Peca> pecasTabuleiro;
+    private ArrayList<Peca> pecasGanhas;
 
     public Jogador(String idJogador) {
         this.idJogador = idJogador;
         this.pecas = new HashMap<>();
+        this.pecasGanhas = new ArrayList<>();
         this.pecasTabuleiro = new HashMap<>();
         // Criar e adicionar quatro peças ao jogador
         for (int i = 1; i <= 4; i++) {
@@ -25,6 +27,10 @@ public class Jogador {
 
     public HashMap<Integer, Peca> getPecasTabuleiro() {
         return pecasTabuleiro;
+    }
+
+    public ArrayList<Peca> getPecasGanhas() {
+        return pecasGanhas;
     }
 
 
@@ -57,6 +63,11 @@ public class Jogador {
         pecas.put(peca.getIdPeca(), peca);
     }
 
+    public void moverPecaParaListaGanhas(Peca peca) {
+        pecasTabuleiro.remove(peca.getIdPeca());
+        pecasGanhas.add(peca);
+    }
+
     public String getIdJogador() {
         return idJogador;
     }
@@ -68,5 +79,9 @@ public class Jogador {
     public boolean temPecasTabuleiro() {
         return pecasTabuleiro.size() > 0;
     }
+
+
+
+
 
 }

@@ -40,7 +40,11 @@ public class Peca {
 
     @Override
     public String toString() {
-        return idJogador + idPeca;
+        return jogador.getIdJogador() + idPeca;
+    }
+
+    public int getContador() {
+        return contador;
     }
 
 

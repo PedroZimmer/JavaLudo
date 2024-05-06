@@ -29,20 +29,29 @@ public class Main {
         Jogador jogadorA = new Jogador("A"); // Instancia um novo jogador
         Jogador jogadorB = new Jogador("B"); // Instancia um novo jogador
 
-        tabuleiro.jogar(jogadorA);
-
-
-        tabuleiro.jogar(jogadorB);
-
-        tabuleiro.jogar(jogadorA);
-
-        tabuleiro.jogar(jogadorA);
-        tabuleiro.jogar(jogadorA);
-
-
-        tabuleiro.printTabuleiroFormatado();
-
-
+        //func para jogar, alternar jogadores, verificar se o jogador ganhou
+        //tem q ser um loop ate alguem ganhar
+        int ganhou = 0;
+        while (ganhou == 0) {
+            System.out.println(" ");
+            System.out.println("Vez do jogador " + jogadorA.getIdJogador());
+            System.out.println("Pressione ENTER para jogar o dado");
+            scanner.nextLine();
+            tabuleiro.jogar(jogadorA);
+            if (tabuleiro.verificarSeGanhou(jogadorA)) {
+                System.out.println("O jogador " + jogadorA.getIdJogador() + " venceu!");
+                break;
+            }
+//            System.out.println(" ");
+//            System.out.println("Vez do jogador " + jogadorB.getIdJogador());
+//            System.out.println("Pressione ENTER para jogar o dado");
+//            scanner.nextLine();
+//            tabuleiro.jogar(jogadorB);
+//            if (tabuleiro.verificarSeGanhou(jogadorB)) {
+//                System.out.println("O jogador " + jogadorB.getIdJogador() + " venceu!");
+//                break;
+//            }
+        }
 
 
 
