@@ -63,6 +63,7 @@ public class Jogador {
         pecas.put(peca.getIdPeca(), peca);
     }
 
+
     public void moverPecaParaListaGanhas(Peca peca) {
         pecasTabuleiro.remove(peca.getIdPeca());
         pecasGanhas.add(peca);
@@ -80,8 +81,13 @@ public class Jogador {
         return pecasTabuleiro.size() > 0;
     }
 
-
-
+    public ArrayList getPecasDisponiveis() {
+        List<Peca> pecasDisponiveis = new ArrayList<>();
+        for (Peca peca : pecas.values()) {
+            pecasDisponiveis.add(peca);
+        }
+        return (ArrayList) pecasDisponiveis;
+    }
 
 
 }

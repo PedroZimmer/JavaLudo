@@ -1,11 +1,10 @@
 package org.example.Entities;
 
 import org.example.ConsoleUtil;
+import org.example.IA.Bot;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 
 public class Tabuleiro {
@@ -51,6 +50,11 @@ public class Tabuleiro {
         }
 
     }
+
+    public HashMap<Integer, Stack<Peca>> getCasas() {
+        return casas;
+    }
+
 
     public void jogar(Jogador jogador) {
         int valorDado = jogarDado();
@@ -547,6 +551,281 @@ public class Tabuleiro {
 
 
     }
+
+    // Função para o bot escolher automaticamente qual peça tirar da casinha
+    public Peca escolherPecaParaMoverBOT(Jogador bot, int valorDado) {
+        // Verificar se há peças disponíveis no tabuleiro
+        if (!bot.getPecasTabuleiro().isEmpty()) {
+            // Se houver peças no tabuleiro, escolher uma para mover
+            Peca pecaMover = null;
+            int contadorMax = Integer.MIN_VALUE;
+            for (Peca peca : bot.getPecasTabuleiro().values()) {
+                if (peca.getContador() + valorDado <= 52 && peca.getContador() > contadorMax) {
+                    pecaMover = peca;
+                    contadorMax = peca.getContador();
+                }
+            }
+            return pecaMover;
+        } else {
+            // Se não houver peças no tabuleiro, não é possível mover
+            return null;
+        }
+    }
+
+
+    public Peca tirarPecaDaCasinhaBOT(Jogador bot) {
+        // Obter todas as peças disponíveis do Bot
+        ArrayList<Peca> pecasDisponiveis = bot.getPecasDisponiveis();
+
+        // Verificar se há peças disponíveis
+        if (!pecasDisponiveis.isEmpty()) {
+            // Gerar um índice aleatório dentro do intervalo das peças disponíveis
+            Random random = new Random();
+            int indice = random.nextInt(pecasDisponiveis.size());
+
+            // Retornar a peça correspondente ao índice gerado
+            Peca pecaEscolhida = pecasDisponiveis.get(indice);
+
+            // Mover a peça escolhida para a lista de peças no tabuleiro
+            bot.moverPecaParaListaTabuleiro(pecaEscolhida);
+
+            // Retornar a peça escolhida
+            return pecaEscolhida;
+        } else {
+            // Se não houver peças disponíveis, retornar null
+            return null;
+        }
+    }
+
+
+
+    public void jogarBOT(Jogador bot) {
+        int valorDado = jogarDado();
+        System.out.println("O BOT tirou " + valorDado + "!");
+
+        // Verificar se o dado tirado é 6
+        if (valorDado == 6) {
+            System.out.println("O BOT tirou 6!");
+
+            // Verificar se o bot tem peças no tabuleiro e não tem peças disponíveis
+            if (bot.temPecasTabuleiro() && !bot.temPecasDisponiveis()) {
+                // Realizar a jogada de acordo com o resultado da função matarOuAndar
+                matarOuAndar(bot, valorDado);
+            }
+            // Verificar se o bot tem peças disponíveis e não tem peças no tabuleiro
+            else if (bot.temPecasDisponiveis() && !bot.temPecasTabuleiro()) {
+                // Retirar uma peça da casinha
+                Peca peca = tirarPecaDaCasinhaBOT(bot);
+                // Mover a peça para a lista de peças do tabuleiro
+                bot.moverPecaParaListaTabuleiro(peca);
+                // Adicionar a peça na casa inicial
+                adicionarNaCasaInicial(peca, bot);
+            } else {
+                // Se o bot tiver peças disponíveis e peças no tabuleiro
+                System.out.println("O BOT tem peças disponíveis e peças no tabuleiro.");
+                // Verificar se o bot pode matar uma peça ou se deve mover uma peça
+                matarOuAndar(bot, valorDado);
+            }
+        }
+        // Se o dado tirado não for 6
+        else {
+            // Verificar se o bot tem peças no tabuleiro
+            if (bot.temPecasTabuleiro()) {
+                // Realizar a jogada de acordo com o resultado da função matarOuAndar
+                matarOuAndar(bot, valorDado);
+            } else {
+                // Se o bot não tiver peças no tabuleiro, informar que não há peças para mover
+                System.out.println("Nenhuma peça no tabuleiro para mover.");
+            }
+        }
+        // Imprimir o tabuleiro formatado após a jogada do bot
+        printTabuleiroFormatado();
+        // Imprimir o caminho final após a jogada do bot
+        printCaminhoFinal();
+        // Verificar se o bot ganhou após sua jogada
+        verificarSeGanhou(bot);
+    }
+
+
+//    public void matarOuAndar(Jogador bot, int valorDado) {
+//        // Variável para armazenar a peça que será movida
+//        Peca pecaMovida = null;
+//
+//        // Variável para armazenar a maior contagem de casas
+//        int maiorContador = Integer.MIN_VALUE;
+//
+//        // Iterar sobre todas as peças do bot no tabuleiro
+//        for (Peca peca : bot.getPecasTabuleiro().values()) {
+//            // Verificar se a peça pode ser movida com o valor do dado
+//            int posicaoAtual = retornarPosicaoDaPeca(bot, peca.getIdPeca());
+//            int posicaoNova = posicaoAtual + valorDado;
+//
+//            // Verificar se a nova posição está dentro do tabuleiro
+//            if (posicaoNova <= 52) {
+//                // Verificar se há peças adversárias na casa de destino
+//                if (verificarAdversarioCasaDestino(posicaoNova, bot)) {
+//                    // Matar a peça adversária
+//                    Jogador jogadorAdversario = deQuemEhAPeca(posicaoNova);
+//                    matarPeca(posicaoNova, jogadorAdversario);
+//                    // Mover a peça do bot para a posição nova
+//                    moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+//                    // Atualizar a variável pecaMovida
+//                    pecaMovida = peca;
+//                    // Interromper o loop, pois uma peça foi movida
+//                    break;
+//                }
+//            } else {
+//                // Se a peça atual pode ser movida para fora do tabuleiro, movê-la
+//                moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+//                // Atualizar a variável pecaMovida
+//                pecaMovida = peca;
+//                // Interromper o loop, pois uma peça foi movida
+//                break;
+//            }
+//
+//            // Verificar se a contagem da peça atual é a maior até agora
+//            if (peca.getContador() > maiorContador) {
+//                // Atualizar a maior contagem
+//                maiorContador = peca.getContador();
+//                // Atualizar a variável pecaMovida
+//                pecaMovida = peca;
+//            }
+//        }
+//
+//        // Se nenhuma peça foi movida por causa de uma captura ou porque a maior contagem é maior que a quantidade de casas do tabuleiro, mover a peça com a maior contagem
+//        if (pecaMovida != null) {
+//            // Obter a posição atual da peça movida
+//            int posicaoAtual = retornarPosicaoDaPeca(bot, pecaMovida.getIdPeca());
+//            // Calcular a nova posição com base na contagem anterior e no valor do dado
+//            int posicaoNova = posicaoAtual + valorDado;
+//            // Mover a peça para a nova posição
+//            moverPeca(posicaoAtual, posicaoNova, pecaMovida, bot, valorDado);
+//        }
+//    }
+
+//    public void matarOuAndar(Jogador bot, int valorDado) {
+//        // Variável para armazenar a peça que será movida
+//        Peca pecaMovida = null;
+//
+//        // Variável para armazenar a maior contagem de casas
+//        int maiorContador = Integer.MIN_VALUE;
+//
+//        // Iterar sobre todas as peças do bot no tabuleiro
+//        for (Peca peca : bot.getPecasTabuleiro().values()) {
+//            // Verificar se a peça pode ser movida com o valor do dado
+//            int posicaoAtual = retornarPosicaoDaPeca(bot, peca.getIdPeca());
+//            int posicaoNova = posicaoAtual + valorDado;
+//
+//            // Verificar se a nova posição está dentro do tabuleiro
+//            if (posicaoNova <= 52) {
+//                // Verificar se há peças adversárias na casa de destino
+//                if (verificarAdversarioCasaDestino(posicaoNova, bot)) {
+//                    // Matar a peça adversária
+//                    Jogador jogadorAdversario = deQuemEhAPeca(posicaoNova);
+//                    matarPeca(posicaoNova, jogadorAdversario);
+//                    // Mover a peça do bot para a posição nova
+//                    moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+//                    // Atualizar a variável pecaMovida
+//                    pecaMovida = peca;
+//                    // Interromper o loop, pois uma peça foi movida
+//                    break;
+//                }
+//            } else {
+//                // Se a peça atual pode ser movida para fora do tabuleiro, movê-la
+//                moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+//                // Atualizar a variável pecaMovida
+//                pecaMovida = peca;
+//                // Interromper o loop, pois uma peça foi movida
+//                break;
+//            }
+//
+//            // Verificar se a contagem da peça atual é a maior até agora
+//            if (peca.getContador() > maiorContador) {
+//                // Atualizar a maior contagem
+//                maiorContador = peca.getContador();
+//                // Atualizar a variável pecaMovida
+//                pecaMovida = peca;
+//            }
+//        }
+//
+//        // Se nenhuma peça foi movida por causa de uma captura ou porque a maior contagem é maior que a quantidade de casas do tabuleiro, mover a peça com a maior contagem
+//        if (pecaMovida == null) {
+//            // Escolher uma peça para mover utilizando a função escolherPecaParaMoverBOT
+//            pecaMovida = escolherPecaParaMoverBOT(bot, valorDado);
+//            if (pecaMovida != null) {
+//                // Obter a posição atual da peça movida
+//                int posicaoAtual = retornarPosicaoDaPeca(bot, pecaMovida.getIdPeca());
+//                // Calcular a nova posição com base na contagem anterior e no valor do dado
+//                int posicaoNova = posicaoAtual + valorDado;
+//                // Mover a peça para a nova posição
+//                moverPeca(posicaoAtual, posicaoNova, pecaMovida, bot, valorDado);
+//            }
+//        }
+//    }
+
+    public void matarOuAndar(Jogador bot, int valorDado) {
+        // Variável para armazenar a peça que será movida
+        Peca pecaMovida = null;
+
+        // Variável para armazenar a maior contagem de casas
+        int maiorContador = Integer.MIN_VALUE;
+        boolean movimentoEfetuado = false;
+
+        // Iterar sobre todas as peças do bot no tabuleiro
+        for (Peca peca : bot.getPecasTabuleiro().values()) {
+            // Verificar se a peça pode ser movida com o valor do dado
+            int posicaoAtual = retornarPosicaoDaPeca(bot, peca.getIdPeca());
+            int posicaoNova = posicaoAtual + valorDado;
+
+            // Verificar se a nova posição está dentro do tabuleiro
+            if (posicaoNova <= 52) {
+                // Verificar se há peças adversárias na casa de destino
+                if (verificarAdversarioCasaDestino(posicaoNova, bot)) {
+                    // Matar a peça adversária
+                    Jogador jogadorAdversario = deQuemEhAPeca(posicaoNova);
+                    matarPeca(posicaoNova, jogadorAdversario);
+                    // Mover a peça do bot para a posição nova
+                    moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+                    // Atualizar a variável pecaMovida
+                    pecaMovida = peca;
+                    // Indicar que um movimento foi efetuado
+                    movimentoEfetuado = true;
+                    // Interromper o loop, pois uma peça foi movida
+                    break;
+                }
+            } else {
+                // Se a peça atual pode ser movida para fora do tabuleiro, movê-la
+                moverPeca(posicaoAtual, posicaoNova, peca, bot, valorDado);
+                // Atualizar a variável pecaMovida
+                pecaMovida = peca;
+                // Indicar que um movimento foi efetuado
+                movimentoEfetuado = true;
+                // Interromper o loop, pois uma peça foi movida
+                break;
+            }
+
+            // Verificar se a contagem da peça atual é a maior até agora
+            if (peca.getContador() > maiorContador) {
+                // Atualizar a maior contagem
+                maiorContador = peca.getContador();
+                // Atualizar a variável pecaMovida
+                pecaMovida = peca;
+            }
+        }
+
+        // Se nenhum movimento foi efetuado, tentar mover uma peça com a maior contagem
+        if (!movimentoEfetuado && pecaMovida != null) {
+            // Obter a posição atual da peça movida
+            int posicaoAtual = retornarPosicaoDaPeca(bot, pecaMovida.getIdPeca());
+            // Calcular a nova posição com base na contagem anterior e no valor do dado
+            int posicaoNova = posicaoAtual + valorDado;
+            // Mover a peça para a nova posição
+            moverPeca(posicaoAtual, posicaoNova, pecaMovida, bot, valorDado);
+        }
+    }
+
+
+
 
 
 }
